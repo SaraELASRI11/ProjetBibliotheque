@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('global') // ID des credentials Docker Hub dans Jenkins
+        CREDENTIALS = credentials('global') 
         DOCKER_IMAGE = 'saraelas/gestionbibliotheque-app'
     }
 
@@ -10,11 +10,12 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 script {
-                    // Cloner le dépôt GitHub en SSH
-                    git branch: 'main', url: 'git@github.com:SaraELASRI11/ProjetBibliotheque.git'
+                    
+                    git branch: 'main', credentialsId: 'global', url: 		'https://github.com/SaraELASRI11/ProjetBibliotheque.git'
                 }
             }
         }
+
         stage('Restore & Build') {
             steps {
                 script {
@@ -24,6 +25,7 @@ pipeline {
                 }
             }
         }
+
         stage('Run Tests') {
             steps {
                 script {
@@ -32,6 +34,7 @@ pipeline {
                 }
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -40,17 +43,19 @@ pipeline {
                 }
             }
         }
+
         stage('Push Docker Image') {
             steps {
                 script {
                     // Pousser l'image Docker vers Docker Hub
                     sh '''
-                    echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
+                    echo $CREDENTIALS_PSW | docker login -u $CREDENTIALS_USR --password-stdin
                     docker push ${DOCKER_IMAGE}:latest
                     '''
                 }
             }
         }
+
         stage('Deploy') {
             steps {
                 script {
@@ -62,6 +67,18 @@ pipeline {
                     '''
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline terminé.'
+        }
+        success {
+            echo 'Pipeline exécuté avec succès.'
+        }
+        failure {
+            echo 'Échec du pipeline.'
         }
     }
 }
