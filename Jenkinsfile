@@ -7,28 +7,14 @@ pipeline {
     }
 
     stages {
-        stage('Setup SSH Known Hosts') {
-            steps {
-                script {
-                    // Ajouter les clés hôtes de GitHub au fichier known_hosts
-                    sh '''
-                    mkdir -p ~/.ssh
-                    ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
-                    chmod 644 ~/.ssh/known_hosts
-                    '''
-                }
-            }
-        }
-
         stage('Clone Repository') {
             steps {
                 script {
-                    // Cloner le dépôt GitHub en SSH en utilisant les credentials
-                    git branch: 'main', credentialsId: 'git-ssh', url: 'git@github.com:SaraELASRI11/ProjetBibliotheque.git'
+                    // Cloner le dépôt GitHub en SSH
+                    git branch: 'main', url: 'git@github.com:SaraELASRI11/ProjetBibliotheque.git'
                 }
             }
         }
-
         stage('Restore & Build') {
             steps {
                 script {
@@ -38,7 +24,6 @@ pipeline {
                 }
             }
         }
-
         stage('Run Tests') {
             steps {
                 script {
@@ -47,7 +32,6 @@ pipeline {
                 }
             }
         }
-
         stage('Build Docker Image') {
             steps {
                 script {
@@ -56,7 +40,6 @@ pipeline {
                 }
             }
         }
-
         stage('Push Docker Image') {
             steps {
                 script {
@@ -68,7 +51,6 @@ pipeline {
                 }
             }
         }
-
         stage('Deploy') {
             steps {
                 script {
@@ -80,18 +62,6 @@ pipeline {
                     '''
                 }
             }
-        }
-    }
-
-    post {
-        always {
-            echo 'Pipeline terminé.'
-        }
-        success {
-            echo 'Pipeline exécuté avec succès.'
-        }
-        failure {
-            echo 'Échec du pipeline.'
         }
     }
 }
