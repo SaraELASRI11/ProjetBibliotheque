@@ -40,7 +40,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    export PATH=$DOTNET_PATH:$PATH
+                    
                     dotnet test LivreService_Test/LivreService_Test.csproj 
                     '''
                 }
