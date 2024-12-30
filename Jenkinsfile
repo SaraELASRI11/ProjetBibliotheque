@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        CREDENTIALS = credentials('global') 
+        DOCKER_CREDENTIALS = credentials('global') // ID des credentials Docker Hub
         DOCKER_IMAGE = 'saraelas/gestionbibliotheque-app'
     }
 
@@ -10,8 +10,9 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 script {
-                    
-                    git branch: 'main', credentialsId: 'global', url: 		'https://github.com/SaraELASRI11/ProjetBibliotheque.git'
+                    // Cloner le dépôt GitHub sans credentials (car public)
+                    git branch: 'main',
+                        url: 'https://github.com/SaraELASRI11/ProjetBibliotheque.git'
                 }
             }
         }
@@ -19,7 +20,6 @@ pipeline {
         stage('Restore & Build') {
             steps {
                 script {
-                    // Restaurer les dépendances et construire le projet
                     sh 'dotnet restore GestionBibliotheque.sln'
                     sh 'dotnet build GestionBibliotheque.sln --configuration Release'
                 }
@@ -29,7 +29,6 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Exécuter les tests unitaires depuis LivreService_Test
                     sh 'dotnet test LivreService_Test/LivreService_Test.csproj --configuration Release --no-build'
                 }
             }
@@ -38,7 +37,6 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Construire une image Docker à partir du Dockerfile
                     sh "docker build -t ${DOCKER_IMAGE}:latest ."
                 }
             }
@@ -47,9 +45,8 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Pousser l'image Docker vers Docker Hub
                     sh '''
-                    echo $CREDENTIALS_PSW | docker login -u $CREDENTIALS_USR --password-stdin
+                    echo $DOCKER_CREDENTIALS_PSW | docker login -u $DOCKER_CREDENTIALS_USR --password-stdin
                     docker push ${DOCKER_IMAGE}:latest
                     '''
                 }
@@ -59,7 +56,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Déployer l'image Docker en exécutant un conteneur
                     sh '''
                     docker stop gestionbibliotheque || true
                     docker rm gestionbibliotheque || true
