@@ -42,8 +42,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t ${DOCKER_IMAGE}:latest ."
-                }
+                    sh' docker build -t ${DOCKER_IMAGE}:latest ./GestionBibliotheque '                }
             }
         }
 
