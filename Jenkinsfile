@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOTNET_PATH = '/usr/bin' // Mettez ici le chemin obtenu avec `which dotnet`
-        DOCKER_CREDENTIALS = credentials('dockerhub-credentials')
+        DOCKER_CREDENTIALS = credentials('global')
         DOCKER_IMAGE = 'saraelas/gestionbibliotheque-app'
     }
 
