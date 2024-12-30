@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        PATH = "/usr/bin/dotnet:$PATH"
         DOTNET_PATH = '/usr/bin' // Mettez ici le chemin obtenu avec `which dotnet`
         DOCKER_CREDENTIALS = credentials('global')
         DOCKER_IMAGE = 'saraelas/gestionbibliotheque-app'
@@ -30,11 +31,7 @@ pipeline {
         stage('Restore & Build') {
             steps {
                 script {
-                    sh '''
-                    export PATH=$DOTNET_PATH:$PATH
-                    dotnet restore GestionBibliotheque.sln
-                    dotnet build GestionBibliotheque.sln --configuration Release
-                    '''
+                    sh 'dotnet build GestionBibliotheque.sln'
                 }
             }
         }
