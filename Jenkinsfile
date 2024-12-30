@@ -2,15 +2,25 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS = credentials('global') // ID des credentials Docker Hub
+        DOTNET_PATH = '/usr/bin' // Mettez ici le chemin obtenu avec `which dotnet`
+        DOCKER_CREDENTIALS = credentials('dockerhub-credentials')
         DOCKER_IMAGE = 'saraelas/gestionbibliotheque-app'
     }
 
     stages {
+        stage('Setup Environment') {
+            steps {
+                script {
+                    sh '''
+                    export PATH=$DOTNET_PATH:$PATH
+                    '''
+                }
+            }
+        }
+
         stage('Clone Repository') {
             steps {
                 script {
-                    // Cloner le dépôt GitHub sans credentials (car public)
                     git branch: 'main',
                         url: 'https://github.com/SaraELASRI11/ProjetBibliotheque.git'
                 }
@@ -20,8 +30,11 @@ pipeline {
         stage('Restore & Build') {
             steps {
                 script {
-                    sh 'dotnet restore GestionBibliotheque.sln'
-                    sh 'dotnet build GestionBibliotheque.sln --configuration Release'
+                    sh '''
+                    export PATH=$DOTNET_PATH:$PATH
+                    dotnet restore GestionBibliotheque.sln
+                    dotnet build GestionBibliotheque.sln --configuration Release
+                    '''
                 }
             }
         }
@@ -29,7 +42,10 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    sh 'dotnet test LivreService_Test/LivreService_Test.csproj --configuration Release --no-build'
+                    sh '''
+                    export PATH=$DOTNET_PATH:$PATH
+                    dotnet test LivreService_Test/LivreService_Test.csproj --configuration Release --no-build
+                    '''
                 }
             }
         }
