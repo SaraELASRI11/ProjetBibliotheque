@@ -63,7 +63,7 @@ pipeline {
                     sh '''
                     docker stop gestionbibliotheque || true
                     docker rm gestionbibliotheque || true
-                    docker run -d --name gestionbibliotheque -p 8080:80 ${DOCKER_IMAGE}:latest
+                    docker run -d --name gestionbibliotheque -p 8081:80 ${DOCKER_IMAGE}:latest
                     '''
                 }
             }
