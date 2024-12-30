@@ -41,7 +41,7 @@ pipeline {
                 script {
                     sh '''
                     export PATH=$DOTNET_PATH:$PATH
-                    dotnet test LivreService_Test/LivreService_Test.csproj --configuration Release --no-build
+                    dotnet test LivreService_Test/LivreService_Test.csproj 
                     '''
                 }
             }
