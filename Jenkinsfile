@@ -3,28 +3,23 @@ pipeline {
 
     environment {
         PATH = "/usr/bin/dotnet:$PATH"
-        DOTNET_PATH = '/usr/bin' // Mettez ici le chemin obtenu avec `which dotnet`
         DOCKER_CREDENTIALS = credentials('global')
         DOCKER_IMAGE = 'saraelas/gestionbibliotheque-app'
     }
 
     stages {
-        stage('Setup Environment') {
-            steps {
-                script {
-                    sh '''
-                    export PATH=$DOTNET_PATH:$PATH
-                    '''
-                }
-            }
-        }
-
         stage('Clone Repository') {
             steps {
                 script {
                     git branch: 'main',
                         url: 'https://github.com/SaraELASRI11/ProjetBibliotheque.git'
                 }
+            }
+        }
+
+        stage('Debug Paths') {
+            steps {
+                sh 'ls -R'
             }
         }
 
@@ -39,10 +34,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    sh '''
-                    
-                    dotnet test LivreService_Test/LivreService_Test.csproj 
-                    '''
+                    sh 'dotnet test $WORKSPACE/LivreService_Test/Bibliotheque_Test.csproj '
                 }
             }
         }
