@@ -57,17 +57,23 @@ pipeline {
             }
         }
 
+       stages {
         stage('Deploy') {
             steps {
-                script {
+                sshagent(['globalSsh']) {
                     sh '''
-                    docker stop gestionbibliotheque || true
-                    docker rm gestionbibliotheque || true
-                    docker run -d --name gestionbibliotheque -p 8081:80 ${DOCKER_IMAGE}:latest
+                        ssh -o StrictHostKeyChecking=no sara@globalSsh "
+                            docker login -u '$DOCKER_CREDENTIALS_USR' -p '$DOCKER_CREDENTIALS_PSW ' &&
+                            docker pull $DOCKER_CREDENTIALS_USR/$DOCKER_IMAGE &&
+                            docker stop app_container || true &&
+                            docker rm app_container || true &&
+                            docker run -d --name app_container --restart=always $DOCKER_CREDENTIALS_USR/$DOCKER_IMAGE"
                     '''
                 }
             }
         }
+    }
+
     }
 
     post {
