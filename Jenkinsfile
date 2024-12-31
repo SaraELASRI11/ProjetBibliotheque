@@ -62,7 +62,7 @@ pipeline {
             steps {
                 sshagent(['globalSsh']) {
                     sh '''
-                        ssh -o StrictHostKeyChecking=no sara@globalSsh "
+                        ssh -o StrictHostKeyChecking=no sara@192.168.146.130 "
                             docker login -u '$DOCKER_CREDENTIALS_USR' -p '$DOCKER_CREDENTIALS_PSW ' &&
                             docker pull $DOCKER_CREDENTIALS_USR/$DOCKER_IMAGE &&
                             docker stop app_container || true &&
@@ -87,4 +87,5 @@ pipeline {
             echo 'Échec du pipeline.'
         }
     }
+}
 }
