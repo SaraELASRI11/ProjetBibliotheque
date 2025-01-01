@@ -64,10 +64,10 @@ pipeline {
                     sh '''
                         ssh -o StrictHostKeyChecking=no sara@192.168.146.130 "
                             docker login -u '$DOCKER_CREDENTIALS_USR' -p '$DOCKER_CREDENTIALS_PSW ' &&
-                            docker pull $DOCKER_CREDENTIALS_USR/$DOCKER_IMAGE &&
+                            docker pull $DOCKER_IMAGE &&
                             docker stop app_container || true &&
                             docker rm app_container || true &&
-                            docker run -d --name app_container --restart=always $DOCKER_CREDENTIALS_USR/$DOCKER_IMAGE"
+                            docker run -d --name app_container --restart=always $DOCKER_IMAGE"
                     '''
                 }
             }
