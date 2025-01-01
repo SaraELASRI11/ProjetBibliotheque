@@ -57,7 +57,7 @@ pipeline {
             }
         }
 
-       stages {
+       
         stage('Deploy') {
             steps {
                 sshagent(['globalSsh']) {
@@ -87,5 +87,5 @@ pipeline {
             echo 'Échec du pipeline.'
         }
     }
-}
+
 }
